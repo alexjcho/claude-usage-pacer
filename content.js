@@ -38,82 +38,6 @@
     });
   }
 
-  // ── Active-hours math ──────────────────────────────────────
-
-  /**
-   * Count "active" minutes between two Dates.
-   * Active window each day is [activeStartH .. activeEndH),
-   * where activeEndH=0 means midnight (24). Handles windows
-   * that cross midnight (e.g. 8 AM → 2 AM).
-   */
-  function countActiveMinutes(from, to, activeStartH, activeEndH) {
-    if (to <= from) return 0;
-
-    const aEnd = activeEndH === 0 ? 24 : activeEndH;
-    const crosses = activeStartH >= aEnd;
-
-    let total = 0;
-    const cursor = new Date(from);
-    cursor.setHours(0, 0, 0, 0);
-    if (crosses) cursor.setDate(cursor.getDate() - 1);
-
-    const fromMs = from.getTime();
-    const toMs = to.getTime();
-
-    for (let i = 0; i < 12 && cursor.getTime() <= toMs; i++) {
-      if (!crosses) {
-        const s = new Date(cursor);
-        s.setHours(activeStartH, 0, 0, 0);
-        const e = new Date(cursor);
-        e.setHours(aEnd, 0, 0, 0);
-        const os = Math.max(s.getTime(), fromMs);
-        const oe = Math.min(e.getTime(), toMs);
-        if (oe > os) total += (oe - os) / 60000;
-      } else {
-        // Part 1: activeStart → midnight on this calendar day
-        const s1 = new Date(cursor);
-        s1.setHours(activeStartH, 0, 0, 0);
-        const e1 = new Date(cursor);
-        e1.setDate(e1.getDate() + 1);
-        e1.setHours(0, 0, 0, 0);
-        let os = Math.max(s1.getTime(), fromMs);
-        let oe = Math.min(e1.getTime(), toMs);
-        if (oe > os) total += (oe - os) / 60000;
-
-        // Part 2: midnight → activeEnd on next calendar day
-        const s2 = new Date(e1);
-        const e2 = new Date(e1);
-        e2.setHours(activeEndH, 0, 0, 0);
-        os = Math.max(s2.getTime(), fromMs);
-        oe = Math.min(e2.getTime(), toMs);
-        if (oe > os) total += (oe - os) / 60000;
-      }
-      cursor.setDate(cursor.getDate() + 1);
-    }
-    return total;
-  }
-
-  /** Active-hours-weighted fraction elapsed for a cycle. */
-  function activeHoursFraction(resetDate, cycleDays) {
-    const now = new Date();
-    const cycleStart = new Date(resetDate);
-    cycleStart.setDate(cycleStart.getDate() - cycleDays);
-
-    const aEnd = cfg.activeEnd === 0 ? 24 : cfg.activeEnd;
-    const crosses = cfg.activeStart >= aEnd;
-    const activeHoursPerDay = crosses
-      ? 24 - cfg.activeStart + (cfg.activeEnd === 0 ? 0 : cfg.activeEnd)
-      : aEnd - cfg.activeStart;
-
-    const totalActive = cycleDays * activeHoursPerDay * 60;
-    if (totalActive <= 0) return null;
-
-    const elapsed = countActiveMinutes(
-      cycleStart, now, cfg.activeStart, cfg.activeEnd
-    );
-    return Math.min(elapsed / totalActive, 0.999);
-  }
-
   // ── Cycle parsing ──────────────────────────────────────────
 
   /** Parse "Resets in Xhr Ymin" → linear fraction of cycle elapsed. */
@@ -156,7 +80,7 @@
     const resetDate = getWeeklyResetDate(text);
     if (!resetDate) return null;
 
-    if (cfg.activeEnabled) return activeHoursFraction(resetDate, 7);
+    if (cfg.activeEnabled) return activeHoursFraction(resetDate, 7, cfg);
 
     // Linear fallback (original behaviour)
     const now = new Date();
@@ -185,7 +109,7 @@
           const hrs = parseInt(m[1] || "0", 10);
           const mins = parseInt(m[2] || "0", 10);
           const resetDate = new Date(Date.now() + (hrs * 60 + mins) * 60000);
-          return activeHoursFraction(resetDate, 7);
+          return activeHoursFraction(resetDate, 7, cfg);
         }
       }
       return parseCountdownFraction(resetText, 7 * 24 * 60);
