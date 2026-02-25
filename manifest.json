@@ -1,9 +1,12 @@
 {
   "manifest_version": 3,
   "name": "Claude Usage Pacer",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Adds linear pace markers to the Claude usage page so you can see if you're ahead or behind a steady consumption rate.",
-  "permissions": [],
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html"
+  },
   "content_scripts": [
     {
       "matches": ["https://claude.ai/settings/usage"],
