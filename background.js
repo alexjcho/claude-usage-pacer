@@ -7,7 +7,7 @@ importScripts("pace-math.js");
 const ALARM_NAME = "usage-poll";
 const ALARM_PERIOD = 15; // minutes
 
-const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0 };
+const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0, badgeMode: "auto" };
 
 // ── Badge helpers ──────────────────────────────────────────
 
@@ -50,9 +50,33 @@ function loadSettings() {
         activeEnabled: r.activeEnabled ?? DEFAULTS.activeEnabled,
         activeStart: r.activeStart ?? DEFAULTS.activeStart,
         activeEnd: r.activeEnd ?? DEFAULTS.activeEnd,
+        badgeMode: r.badgeMode ?? DEFAULTS.badgeMode,
       });
     });
   });
+}
+
+// ── Delta computation ─────────────────────────────────────
+
+function computeDelta(bucket, isWeekly, cfg) {
+  if (!bucket || bucket.utilization == null || !bucket.resets_at) return null;
+  const usedPct = bucket.utilization;
+  const resetDate = new Date(bucket.resets_at);
+  if (isNaN(resetDate.getTime())) return null;
+
+  const cycleDays = isWeekly ? 7 : 0;
+  let paceFraction;
+  if (cycleDays >= 1 && cfg.activeEnabled) {
+    paceFraction = self.activeHoursFraction(resetDate, cycleDays, cfg);
+  } else {
+    const now = new Date();
+    const totalMs = isWeekly ? 7 * 24 * 60 * 60 * 1000 : 5 * 60 * 60 * 1000;
+    const remaining = resetDate.getTime() - now.getTime();
+    if (remaining <= 0 || remaining > totalMs) return null;
+    paceFraction = (totalMs - remaining) / totalMs;
+  }
+  if (paceFraction == null) return null;
+  return usedPct - paceFraction * 100;
 }
 
 // ── Core poll ──────────────────────────────────────────────
@@ -65,38 +89,27 @@ async function poll() {
     const data = await fetchUsage(orgId);
     if (!data) return clearBadge();
 
-    // Prefer weekly bar; fall back to 5-hour
-    const bucket = data.seven_day || data.five_hour;
-    if (!bucket || bucket.utilization == null || !bucket.resets_at) {
-      return clearBadge();
-    }
-
-    const usedPct = bucket.utilization; // 0–100
-    const resetDate = new Date(bucket.resets_at);
-    if (isNaN(resetDate.getTime())) return clearBadge();
-
     const cfg = await loadSettings();
+    const mode = cfg.badgeMode;
 
-    // Determine cycle length from bucket key
-    const isWeekly = !!data.seven_day;
-    const cycleDays = isWeekly ? 7 : 0;
+    const d5 = computeDelta(data.five_hour, false, cfg);
+    const d7 = computeDelta(data.seven_day, true, cfg);
 
-    let paceFraction;
-    if (cycleDays >= 1 && cfg.activeEnabled) {
-      paceFraction = self.activeHoursFraction(resetDate, cycleDays, cfg);
+    let delta;
+    if (mode === "five_hour") {
+      delta = d5 ?? d7;
+    } else if (mode === "seven_day") {
+      delta = d7 ?? d5;
     } else {
-      // Linear fallback: time remaining / total cycle
-      const now = new Date();
-      const totalMs = isWeekly ? 7 * 24 * 60 * 60 * 1000 : 5 * 60 * 60 * 1000;
-      const remaining = resetDate.getTime() - now.getTime();
-      if (remaining <= 0 || remaining > totalMs) return clearBadge();
-      paceFraction = (totalMs - remaining) / totalMs;
+      // auto: whichever has the higher delta (more urgent)
+      if (d5 != null && d7 != null) {
+        delta = d5 >= d7 ? d5 : d7;
+      } else {
+        delta = d5 ?? d7;
+      }
     }
 
-    if (paceFraction == null) return clearBadge();
-
-    const pacePct = paceFraction * 100;
-    const delta = usedPct - pacePct;
+    if (delta == null) return clearBadge();
     applyBadge(delta);
   } catch {
     clearBadge();

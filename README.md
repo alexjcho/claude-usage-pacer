@@ -4,7 +4,7 @@ A Chrome extension that shows whether you're ahead or behind your Claude usage p
 
 ## Features
 
-### Toolbar badge (new in v2.0.0)
+### Toolbar badge
 
 The extension icon always shows your pace status as a `+N` or `-N` badge, so you never need to visit the usage page to know where you stand.
 
@@ -14,7 +14,19 @@ The extension icon always shows your pace status as a `+N` or `-N` badge, so you
 | Behind / on pace | `-3` | Green |
 | Not logged in / error | *(empty)* | — |
 
-A service worker polls the Claude usage API every 15 minutes using your existing session cookies. It prefers the weekly usage bar; falls back to the 5-hour session bar if weekly data is unavailable.
+A service worker polls the Claude usage API every 15 minutes using your existing session cookies.
+
+### Badge tracking mode (new in v2.1.0)
+
+Control which usage bucket the toolbar badge tracks:
+
+| Mode | Behavior |
+|---|---|
+| **Auto (urgent)** | Surfaces whichever bucket has the higher delta — the one you should worry about. Default. |
+| **Session (5hr)** | Always tracks the 5-hour session bar |
+| **Weekly** | Always tracks the 7-day weekly bar |
+
+Click the extension icon to change the mode. If a selected bucket isn't available in the API response, the badge falls back to the other one.
 
 ### Usage page pace lines
 
@@ -26,6 +38,7 @@ Weekly pace calculations are weighted by **active hours** instead of raw clock t
 
 Click the extension icon to configure:
 
+- **Badge tracks** — which bucket the badge shows (Auto / Session / Weekly)
 - **Toggle** active hours pacing on/off (off falls back to linear 24/7 pacing)
 - **Start / End** hour for your typical active window
 

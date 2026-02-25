@@ -1,3 +1,4 @@
+const badgeModeSelect = document.getElementById("badgeMode");
 const startSelect = document.getElementById("startHour");
 const endSelect = document.getElementById("endHour");
 const toggle = document.getElementById("toggle");
@@ -27,8 +28,9 @@ for (const h of [20, 21, 22, 23, 0, 1, 2, 3]) {
 
 // Load
 chrome.storage.local.get(
-  ["activeStart", "activeEnd", "activeEnabled"],
+  ["activeStart", "activeEnd", "activeEnabled", "badgeMode"],
   (r) => {
+    badgeModeSelect.value = r.badgeMode ?? "auto";
     startSelect.value = r.activeStart ?? 8;
     endSelect.value = r.activeEnd ?? 0;
     toggle.checked = r.activeEnabled ?? true;
@@ -39,6 +41,7 @@ chrome.storage.local.get(
 // Save on any change
 function save() {
   chrome.storage.local.set({
+    badgeMode: badgeModeSelect.value,
     activeStart: parseInt(startSelect.value),
     activeEnd: parseInt(endSelect.value),
     activeEnabled: toggle.checked,
@@ -46,6 +49,7 @@ function save() {
   hoursConfig.classList.toggle("disabled", !toggle.checked);
 }
 
+badgeModeSelect.addEventListener("change", save);
 startSelect.addEventListener("change", save);
 endSelect.addEventListener("change", save);
 toggle.addEventListener("change", save);
