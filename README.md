@@ -2,7 +2,7 @@
 
 A minimal Chrome extension that adds pace markers to your Claude usage page (`claude.ai/settings/usage`).
 
-When you visit the page, it reads the displayed usage percentages and reset times, calculates where linear usage pacing would put you at the current point in each cycle (session, weekly all-models, weekly Sonnet), and overlays a small vertical "pace line" on each progress bar. Supplemental text next to each bar shows whether you're ahead or behind pace (e.g., "+8% ahead" or "−3% behind").
+When you visit the page, it reads the displayed usage percentages and reset times, calculates where pacing would put you at the current point in each cycle (session, weekly all-models, weekly Sonnet), and overlays a small vertical "pace line" on each progress bar. Supplemental text next to each bar shows whether you're ahead or behind pace (e.g., "+8% ahead" or "−3% behind").
 
 No API calls, no background activity, no data collection — purely a visual enhancement on a page you're already viewing.
 
@@ -17,6 +17,17 @@ No API calls, no background activity, no data collection — purely a visual enh
 ## How it works
 
 The content script runs only on the usage page. It parses each progress bar's reset text ("Resets in 3hr 20min" or "Resets Thu 8:00 AM") to figure out how far through the current cycle you are, then draws an amber pace line at the corresponding percentage. A label like "+12% ahead" (red) or "−5% behind" (green) appears next to each bar so you can see at a glance whether you're burning through usage faster or slower than a steady rate.
+
+### Active hours pacing
+
+By default, weekly pace lines are weighted by **active hours** instead of raw clock time. This means the pace line only advances during your waking hours (default 8 AM – midnight) and freezes overnight. Without this, sleeping for 8 hours makes you look ~5% "behind" by morning even though you were never going to use Claude at 3 AM.
+
+Click the extension icon to configure:
+
+- **Toggle** active hours pacing on/off (off falls back to linear 24/7 pacing)
+- **Start / End** hour for your typical active window
+
+Session bars (5-hour cycle) always use linear pacing since they're too short for sleep to matter.
 
 ## License
 
