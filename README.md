@@ -4,9 +4,9 @@ A Chrome extension that shows whether you're ahead or behind your Claude usage p
 
 ## Features
 
-### Custom gauge icon (new in v2.2.0)
+### Custom gauge icon (updated in v2.2.1)
 
-The extension uses a half-gauge icon in the toolbar and on the extensions page, replacing Chrome's default puzzle piece. The badge overlay renders on top of the gauge.
+The extension uses a half-gauge icon in the toolbar and on the extensions page, replacing Chrome's default puzzle piece. The gauge is positioned in the upper portion of the icon so the badge overlay renders below it instead of on top of it.
 
 ### Toolbar badge
 
