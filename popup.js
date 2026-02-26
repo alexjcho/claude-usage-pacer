@@ -213,3 +213,14 @@ function save() {
 startSelect.addEventListener("change", save);
 endSelect.addEventListener("change", save);
 toggle.addEventListener("change", save);
+
+// ── Poll interval setting ─────────────────────────────────────
+const pollIntervalSelect = document.getElementById("pollInterval");
+
+chrome.storage.local.get(["pollInterval"], (r) => {
+  pollIntervalSelect.value = r.pollInterval ?? 5;
+});
+
+pollIntervalSelect.addEventListener("change", () => {
+  chrome.storage.local.set({ pollInterval: parseInt(pollIntervalSelect.value, 10) });
+});

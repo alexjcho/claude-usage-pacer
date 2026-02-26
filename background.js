@@ -1,13 +1,13 @@
 // Claude Usage Pacer — service worker
-// Polls claude.ai usage API every 15 minutes, computes pace deltas,
+// Polls claude.ai usage API on a configurable interval, computes pace deltas,
 // and renders a two-bar color icon on the toolbar.
 
 importScripts("pace-math.js");
 
 const ALARM_NAME = "usage-poll";
-const ALARM_PERIOD = 15; // minutes
+const POLL_INTERVAL_DEFAULT = 5; // minutes
 
-const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0 };
+const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0, pollInterval: POLL_INTERVAL_DEFAULT };
 
 // ── Color mapping ────────────────────────────────────────────
 
@@ -129,6 +129,7 @@ function loadSettings() {
         activeEnabled: r.activeEnabled ?? DEFAULTS.activeEnabled,
         activeStart: r.activeStart ?? DEFAULTS.activeStart,
         activeEnd: r.activeEnd ?? DEFAULTS.activeEnd,
+        pollInterval: r.pollInterval ?? DEFAULTS.pollInterval,
       });
     });
   });
@@ -191,19 +192,25 @@ async function poll() {
 
 // ── Alarm management ─────────────────────────────────────────
 
-function ensureAlarm() {
-  chrome.alarms.get(ALARM_NAME, (existing) => {
-    if (!existing) {
-      chrome.alarms.create(ALARM_NAME, { periodInMinutes: ALARM_PERIOD });
-    }
-  });
+async function resetAlarm(periodInMinutes) {
+  await chrome.alarms.clear(ALARM_NAME);
+  chrome.alarms.create(ALARM_NAME, { periodInMinutes });
+}
+
+async function ensureAlarm() {
+  const existing = await chrome.alarms.get(ALARM_NAME);
+  if (!existing) {
+    const { pollInterval } = await loadSettings();
+    chrome.alarms.create(ALARM_NAME, { periodInMinutes: pollInterval });
+  }
 }
 
 // ── Event listeners ──────────────────────────────────────────
 
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(async () => {
   poll();
-  chrome.alarms.create(ALARM_NAME, { periodInMinutes: ALARM_PERIOD });
+  const { pollInterval } = await loadSettings();
+  chrome.alarms.create(ALARM_NAME, { periodInMinutes: pollInterval });
 });
 
 chrome.runtime.onStartup.addListener(() => {
@@ -215,6 +222,13 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === ALARM_NAME) poll();
 });
 
-chrome.storage.onChanged.addListener(() => {
+chrome.storage.onChanged.addListener((changes) => {
+  // Ignore _paceData writes to break the poll→store→poll loop
+  const keys = Object.keys(changes);
+  if (keys.length === 1 && keys[0] === "_paceData") return;
+
+  if (changes.pollInterval) {
+    resetAlarm(changes.pollInterval.newValue);
+  }
   poll();
 });
