@@ -4,6 +4,10 @@ A Chrome extension that shows whether you're ahead or behind your Claude usage p
 
 ## Features
 
+### Custom gauge icon (new in v2.2.0)
+
+The extension uses a half-gauge icon in the toolbar and on the extensions page, replacing Chrome's default puzzle piece. The badge overlay renders on top of the gauge.
+
 ### Toolbar badge
 
 The extension icon always shows your pace status as a `+N` or `-N` badge, so you never need to visit the usage page to know where you stand.
