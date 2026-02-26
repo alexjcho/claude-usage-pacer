@@ -45,6 +45,7 @@ Click the extension icon to configure:
 - **Badge tracks** — which bucket the badge shows (Auto / Session / Weekly)
 - **Active hours** — toggle on/off (off falls back to linear 24/7 pacing)
 - **Start / End hour** — your typical active window
+- **Skip weekends** — freeze the pace marker on Saturday/Sunday so the full weekly budget is spread across weekdays only
 
 Session bars (5-hour cycle) always use linear pacing since they're too short for sleep to matter.
 

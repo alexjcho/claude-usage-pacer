@@ -8,11 +8,12 @@
  * where activeEndH=0 means midnight (24). Handles windows
  * that cross midnight (e.g. 8 AM → 2 AM).
  */
-self.countActiveMinutes = function (from, to, activeStartH, activeEndH) {
+self.countActiveMinutes = function (from, to, activeStartH, activeEndH, skipWeekends) {
   if (to <= from) return 0;
 
   const aEnd = activeEndH === 0 ? 24 : activeEndH;
   const crosses = activeStartH >= aEnd;
+  const isWeekend = (d) => d.getDay() === 0 || d.getDay() === 6;
 
   let total = 0;
   const cursor = new Date(from);
@@ -24,29 +25,40 @@ self.countActiveMinutes = function (from, to, activeStartH, activeEndH) {
 
   for (let i = 0; i < 12 && cursor.getTime() <= toMs; i++) {
     if (!crosses) {
-      const s = new Date(cursor);
-      s.setHours(activeStartH, 0, 0, 0);
-      const e = new Date(cursor);
-      e.setHours(aEnd, 0, 0, 0);
-      const os = Math.max(s.getTime(), fromMs);
-      const oe = Math.min(e.getTime(), toMs);
-      if (oe > os) total += (oe - os) / 60000;
+      if (!(skipWeekends && isWeekend(cursor))) {
+        const s = new Date(cursor);
+        s.setHours(activeStartH, 0, 0, 0);
+        const e = new Date(cursor);
+        e.setHours(aEnd, 0, 0, 0);
+        const os = Math.max(s.getTime(), fromMs);
+        const oe = Math.min(e.getTime(), toMs);
+        if (oe > os) total += (oe - os) / 60000;
+      }
     } else {
-      const s1 = new Date(cursor);
-      s1.setHours(activeStartH, 0, 0, 0);
-      const e1 = new Date(cursor);
-      e1.setDate(e1.getDate() + 1);
-      e1.setHours(0, 0, 0, 0);
-      let os = Math.max(s1.getTime(), fromMs);
-      let oe = Math.min(e1.getTime(), toMs);
-      if (oe > os) total += (oe - os) / 60000;
+      // Segment 1: activeStart → midnight (cursor's day)
+      if (!(skipWeekends && isWeekend(cursor))) {
+        const s1 = new Date(cursor);
+        s1.setHours(activeStartH, 0, 0, 0);
+        const e1 = new Date(cursor);
+        e1.setDate(e1.getDate() + 1);
+        e1.setHours(0, 0, 0, 0);
+        let os = Math.max(s1.getTime(), fromMs);
+        let oe = Math.min(e1.getTime(), toMs);
+        if (oe > os) total += (oe - os) / 60000;
+      }
 
-      const s2 = new Date(e1);
-      const e2 = new Date(e1);
-      e2.setHours(activeEndH, 0, 0, 0);
-      os = Math.max(s2.getTime(), fromMs);
-      oe = Math.min(e2.getTime(), toMs);
-      if (oe > os) total += (oe - os) / 60000;
+      // Segment 2: midnight → activeEnd (next day)
+      const nextDay = new Date(cursor);
+      nextDay.setDate(nextDay.getDate() + 1);
+      nextDay.setHours(0, 0, 0, 0);
+      if (!(skipWeekends && isWeekend(nextDay))) {
+        const s2 = new Date(nextDay);
+        const e2 = new Date(nextDay);
+        e2.setHours(activeEndH, 0, 0, 0);
+        let os = Math.max(s2.getTime(), fromMs);
+        let oe = Math.min(e2.getTime(), toMs);
+        if (oe > os) total += (oe - os) / 60000;
+      }
     }
     cursor.setDate(cursor.getDate() + 1);
   }
@@ -63,18 +75,16 @@ self.activeHoursFraction = function (resetDate, cycleDays, cfg) {
   const now = new Date();
   const cycleStart = new Date(resetDate);
   cycleStart.setDate(cycleStart.getDate() - cycleDays);
+  const cycleEnd = new Date(resetDate);
+  const skip = cfg.skipWeekends || false;
 
-  const aEnd = cfg.activeEnd === 0 ? 24 : cfg.activeEnd;
-  const crosses = cfg.activeStart >= aEnd;
-  const activeHoursPerDay = crosses
-    ? 24 - cfg.activeStart + (cfg.activeEnd === 0 ? 0 : cfg.activeEnd)
-    : aEnd - cfg.activeStart;
-
-  const totalActive = cycleDays * activeHoursPerDay * 60;
+  const totalActive = self.countActiveMinutes(
+    cycleStart, cycleEnd, cfg.activeStart, cfg.activeEnd, skip
+  );
   if (totalActive <= 0) return null;
 
   const elapsed = self.countActiveMinutes(
-    cycleStart, now, cfg.activeStart, cfg.activeEnd
+    cycleStart, now, cfg.activeStart, cfg.activeEnd, skip
   );
   return Math.min(elapsed / totalActive, 0.999);
 };
