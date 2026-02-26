@@ -10,6 +10,29 @@
   const POLL_INTERVAL = 300;
   const MAX_POLLS = 50;
 
+  // ── Delta → color gradient (matches popup & icon) ─────────
+  function deltaToColor(delta) {
+    if (delta == null) return "rgb(80,80,80)";
+    const stops = [
+      { at: -20, r: 22,  g: 163, b: 74  },
+      { at: -10, r: 74,  g: 222, b: 128 },
+      { at:   0, r: 234, g: 179, b: 8   },
+      { at:  10, r: 249, g: 115, b: 22  },
+      { at:  20, r: 239, g: 68,  b: 68  },
+    ];
+    const d = Math.max(-20, Math.min(20, delta));
+    for (let i = 0; i < stops.length - 1; i++) {
+      if (d <= stops[i + 1].at) {
+        const t = (d - stops[i].at) / (stops[i + 1].at - stops[i].at);
+        const r = Math.round(stops[i].r + t * (stops[i + 1].r - stops[i].r));
+        const g = Math.round(stops[i].g + t * (stops[i + 1].g - stops[i].g));
+        const b = Math.round(stops[i].b + t * (stops[i + 1].b - stops[i].b));
+        return `rgb(${r},${g},${b})`;
+      }
+    }
+    return "rgb(239,68,68)";
+  }
+
   const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   // ── Active-hours settings (loaded from chrome.storage) ─────
@@ -182,7 +205,7 @@
     const sign = diff >= 0 ? "+" : "\u2212";
     const abs = Math.abs(diff).toFixed(0);
     const word = diff >= 0 ? "ahead" : "behind";
-    const color = diff >= 0 ? "#ef4444" : "#22c55e";
+    const color = deltaToColor(diff);
 
     const span = document.createElement("span");
     span.className = "cup-pace-text";
