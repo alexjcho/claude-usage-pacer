@@ -215,6 +215,84 @@
       border-top: 1px solid var(--border);
     }
 
+    /* ─── Pace Status ─── */
+    .pace-metric {
+      padding: 12px 14px;
+    }
+
+    .pace-metric + .pace-metric {
+      border-top: 1px solid var(--border);
+    }
+
+    .pace-metric-header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 8px;
+    }
+
+    .pace-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .pace-metric-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    .pace-bar-track {
+      height: 6px;
+      background: #1e1e1e;
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .pace-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.3s ease, background 0.3s ease;
+    }
+
+    .pace-bar-marker {
+      position: absolute;
+      top: -1px;
+      bottom: -1px;
+      width: 2px;
+      background: rgba(255,255,255,0.4);
+      border-radius: 1px;
+      transition: left 0.3s ease;
+    }
+
+    .pace-detail {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+    }
+
+    .pace-delta {
+      font-weight: 600;
+    }
+
+    .pace-reset {
+      color: var(--text-muted);
+    }
+
+    .pace-no-data {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      padding: 10px 14px;
+      text-align: center;
+    }
+
     /* ─── Hint ─── */
     .hint {
       font-size: 11px;
@@ -234,23 +312,16 @@
     <h1>Usage Pacer</h1>
   </div>
 
+  <div class="section-label">Pace</div>
+
+  <div class="card" id="paceCard">
+    <div class="pace-no-data" id="paceLoading">Loading&hellip;</div>
+  </div>
+
   <button id="openUsage" class="usage-btn">
     Open Usage Page
     <span class="arrow">&rarr;</span>
   </button>
-
-  <div class="section-label">Settings</div>
-
-  <div class="card">
-    <div class="row">
-      <label for="badgeMode">Badge tracks</label>
-      <select id="badgeMode">
-        <option value="auto">Auto (urgent)</option>
-        <option value="five_hour">Session (5hr)</option>
-        <option value="seven_day">Weekly</option>
-      </select>
-    </div>
-  </div>
 
   <div class="section-label">Active hours</div>
 
