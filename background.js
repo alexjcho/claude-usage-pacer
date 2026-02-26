@@ -98,8 +98,9 @@ function setTwoBarIcon(d5, d7) {
 
   const fmt = (d) =>
     d == null ? "—" : (d >= 0 ? "+" : "") + Math.round(d) + "%";
+  const time = new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
   chrome.action.setTitle({
-    title: `Session ${fmt(d5)}  ·  Weekly ${fmt(d7)}`,
+    title: `Session ${fmt(d5)}  ·  Weekly ${fmt(d7)}\nChecked ${time}`,
   });
 }
 
