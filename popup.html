@@ -1,91 +1,281 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0c0c0c;
+      --surface: #141414;
+      --border: #222;
+      --border-hover: #3a3a3a;
+      --text: #e0e0e0;
+      --text-secondary: #8a8a8a;
+      --text-muted: #505050;
+      --amber: #f59e0b;
+      --amber-dim: rgba(245, 158, 11, 0.07);
+      --amber-glow: rgba(245, 158, 11, 0.14);
+      --amber-border: rgba(245, 158, 11, 0.22);
+    }
+
     body {
-      width: 260px;
-      padding: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      width: 280px;
+      padding: 18px;
+      font-family: 'Manrope', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 13px;
-      color: #1a1a1a;
-      margin: 0;
+      color: var(--text);
+      background: var(--bg);
     }
-    h3 {
-      margin: 0 0 14px;
-      font-size: 14px;
+
+    /* ─── Header ─── */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 16px;
+    }
+
+    .header svg {
+      width: 14px;
+      height: 14px;
+      color: var(--amber);
+      flex-shrink: 0;
+    }
+
+    .header h1 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+    }
+
+    /* ─── Usage Link ─── */
+    .usage-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 13px;
+      background: var(--amber-dim);
+      border: 1px solid var(--amber-border);
+      border-radius: 8px;
+      color: var(--amber);
+      font-family: inherit;
+      font-size: 13px;
       font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-bottom: 18px;
     }
+
+    .usage-btn:hover {
+      background: var(--amber-glow);
+      border-color: rgba(245, 158, 11, 0.38);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.07);
+    }
+
+    .usage-btn .arrow {
+      transition: transform 0.15s ease, opacity 0.15s ease;
+      opacity: 0.5;
+    }
+
+    .usage-btn:hover .arrow {
+      transform: translateX(3px);
+      opacity: 1;
+    }
+
+    /* ─── Section Label ─── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── Card ─── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      margin-bottom: 14px;
+    }
+
+    /* ─── Row ─── */
     .row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 10px;
+      padding: 10px 14px;
     }
-    label { font-size: 13px; }
+
+    .row + .row {
+      border-top: 1px solid var(--border);
+    }
+
+    .row label {
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    /* ─── Select ─── */
     select {
-      padding: 4px 8px;
-      border: 1px solid #d1d5db;
+      appearance: none;
+      -webkit-appearance: none;
+      padding: 5px 26px 5px 9px;
+      background: var(--bg);
+      border: 1px solid var(--border);
       border-radius: 6px;
-      font-size: 13px;
+      color: var(--text);
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23666' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+    }
+
+    select:hover { border-color: var(--border-hover); }
+
+    select:focus {
+      outline: none;
+      border-color: var(--amber);
+      box-shadow: 0 0 0 2px var(--amber-glow);
+    }
+
+    /* ─── Toggle ─── */
+    .toggle {
+      position: relative;
+      width: 36px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .toggle input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+      position: absolute;
+    }
+
+    .toggle .slider {
+      position: absolute;
+      inset: 0;
+      background: #2a2a2a;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.2s, box-shadow 0.2s;
+    }
+
+    .toggle .slider::before {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 16px;
+      left: 2px;
+      bottom: 2px;
+      background: #666;
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle input:checked + .slider {
+      background: var(--amber);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.2);
+    }
+
+    .toggle input:checked + .slider::before {
+      transform: translateX(16px);
       background: #fff;
     }
-    /* toggle switch */
-    .toggle { position: relative; width: 40px; height: 22px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
-    .toggle .slider {
-      position: absolute; inset: 0;
-      background: #d1d5db; border-radius: 11px;
-      cursor: pointer; transition: background 0.2s;
-    }
-    .toggle .slider::before {
-      content: ''; position: absolute;
-      width: 18px; height: 18px; left: 2px; bottom: 2px;
-      background: #fff; border-radius: 50%; transition: transform 0.2s;
-    }
-    .toggle input:checked + .slider { background: #f59e0b; }
-    .toggle input:checked + .slider::before { transform: translateX(18px); }
+
+    /* ─── Hours Config ─── */
     .hours-config { transition: opacity 0.2s; }
-    .hours-config.disabled { opacity: 0.35; pointer-events: none; }
+    .hours-config.disabled { opacity: 0.3; pointer-events: none; }
+
+    .hours-config .row:first-child {
+      border-top: 1px solid var(--border);
+    }
+
+    /* ─── Hint ─── */
     .hint {
-      font-size: 11px; color: #6b7280;
-      margin: 12px 0 0; line-height: 1.45;
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      padding: 0 2px;
     }
   </style>
 </head>
 <body>
-  <h3>Claude Usage Pacer</h3>
 
-  <div class="row">
-    <label for="badgeMode">Badge tracks</label>
-    <select id="badgeMode">
-      <option value="auto">Auto (urgent)</option>
-      <option value="five_hour">Session (5hr)</option>
-      <option value="seven_day">Weekly</option>
-    </select>
+  <div class="header">
+    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-linecap="round">
+      <path d="M2 10a6 6 0 1 1 10 0" stroke-width="1.5"/>
+      <path d="M7 7l2.5-2.5" stroke-width="1.5"/>
+    </svg>
+    <h1>Usage Pacer</h1>
   </div>
 
-  <div class="row">
-    <label for="toggle">Active hours pacing</label>
-    <label class="toggle">
-      <input type="checkbox" id="toggle" checked>
-      <span class="slider"></span>
-    </label>
-  </div>
+  <button id="openUsage" class="usage-btn">
+    Open Usage Page
+    <span class="arrow">&rarr;</span>
+  </button>
 
-  <div class="hours-config" id="hoursConfig">
+  <div class="section-label">Settings</div>
+
+  <div class="card">
     <div class="row">
-      <label for="startHour">Start</label>
-      <select id="startHour"></select>
+      <label for="badgeMode">Badge tracks</label>
+      <select id="badgeMode">
+        <option value="auto">Auto (urgent)</option>
+        <option value="five_hour">Session (5hr)</option>
+        <option value="seven_day">Weekly</option>
+      </select>
     </div>
+  </div>
+
+  <div class="section-label">Active hours</div>
+
+  <div class="card">
     <div class="row">
-      <label for="endHour">End</label>
-      <select id="endHour"></select>
+      <label for="toggle">Enabled</label>
+      <label class="toggle">
+        <input type="checkbox" id="toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="hours-config" id="hoursConfig">
+      <div class="row">
+        <label for="startHour">Start</label>
+        <select id="startHour"></select>
+      </div>
+      <div class="row">
+        <label for="endHour">End</label>
+        <select id="endHour"></select>
+      </div>
     </div>
   </div>
 
   <p class="hint">
-    Pace line only advances during waking hours, so overnight gaps
-    won't inflate your "behind" percentage.
+    Pace line only advances during these hours &mdash; overnight gaps won't inflate your numbers.
   </p>
 
   <script src="popup.js"></script>

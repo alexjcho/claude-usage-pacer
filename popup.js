@@ -1,3 +1,8 @@
+// Open usage page in a new tab
+document.getElementById("openUsage").addEventListener("click", () => {
+  chrome.tabs.create({ url: "https://claude.ai/settings/usage" });
+});
+
 const badgeModeSelect = document.getElementById("badgeMode");
 const startSelect = document.getElementById("startHour");
 const endSelect = document.getElementById("endHour");
