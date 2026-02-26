@@ -1,16 +1,16 @@
 # Claude Usage Pacer
 
-A Chrome extension that shows whether you're ahead or behind your Claude usage pace — both on the usage page and as a toolbar badge.
+A Chrome extension that tells you whether you're ahead or behind your Claude usage pace — at a glance from the toolbar, or in detail on the usage page.
+
+## Why
+
+Claude's usage limits reset on a rolling window, but the usage page only shows a progress bar with no sense of *rate*. Are you burning through your quota too fast, or do you have room to keep going? This extension answers that by overlaying pace markers and showing a live badge in the toolbar.
 
 ## Features
 
-### Custom gauge icon (updated in v2.2.1)
-
-The extension uses a half-gauge icon in the toolbar and on the extensions page, replacing Chrome's default puzzle piece. The gauge is positioned in the upper portion of the icon so the badge overlay renders below it instead of on top of it.
-
 ### Toolbar badge
 
-The extension icon always shows your pace status as a `+N` or `-N` badge, so you never need to visit the usage page to know where you stand.
+Your pace status is always visible as a `+N` or `-N` badge on the extension icon — no need to visit the usage page.
 
 | State | Badge | Color |
 |---|---|---|
@@ -20,13 +20,13 @@ The extension icon always shows your pace status as a `+N` or `-N` badge, so you
 
 A service worker polls the Claude usage API every 15 minutes using your existing session cookies.
 
-### Badge tracking mode (new in v2.1.0)
+### Badge tracking mode
 
 Control which usage bucket the toolbar badge tracks:
 
 | Mode | Behavior |
 |---|---|
-| **Auto (urgent)** | Surfaces whichever bucket has the higher delta — the one you should worry about. Default. |
+| **Auto (urgent)** | Shows whichever bucket has the higher delta — the one you should worry about. *(default)* |
 | **Session (5hr)** | Always tracks the 5-hour session bar |
 | **Weekly** | Always tracks the 7-day weekly bar |
 
@@ -43,8 +43,8 @@ Weekly pace calculations are weighted by **active hours** instead of raw clock t
 Click the extension icon to configure:
 
 - **Badge tracks** — which bucket the badge shows (Auto / Session / Weekly)
-- **Toggle** active hours pacing on/off (off falls back to linear 24/7 pacing)
-- **Start / End** hour for your typical active window
+- **Active hours** — toggle on/off (off falls back to linear 24/7 pacing)
+- **Start / End hour** — your typical active window
 
 Session bars (5-hour cycle) always use linear pacing since they're too short for sleep to matter.
 
@@ -59,10 +59,12 @@ The badge starts working immediately. Visit [claude.ai/settings/usage](https://c
 
 ## Permissions
 
-- `storage` — save active hours preferences
-- `cookies` — read `lastActiveOrg` cookie to identify your Claude organization
-- `alarms` — schedule the 15-minute polling interval
-- `host_permissions` for `claude.ai` — credentialed fetch to the usage API
+| Permission | Why |
+|---|---|
+| `storage` | Save your preferences (tracking mode, active hours) |
+| `cookies` | Read `lastActiveOrg` cookie to identify your Claude organization |
+| `alarms` | Schedule the 15-minute polling interval |
+| `host_permissions` (`claude.ai`) | Credentialed fetch to the usage API |
 
 ## License
 
