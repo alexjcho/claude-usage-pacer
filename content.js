@@ -36,7 +36,7 @@
   const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   // ── Active-hours settings (loaded from chrome.storage) ─────
-  const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0 };
+  const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0, skipWeekends: false };
   let cfg = { ...DEFAULTS };
 
   function loadSettings() {
@@ -46,6 +46,7 @@
           cfg.activeEnabled = r.activeEnabled ?? DEFAULTS.activeEnabled;
           cfg.activeStart = r.activeStart ?? DEFAULTS.activeStart;
           cfg.activeEnd = r.activeEnd ?? DEFAULTS.activeEnd;
+          cfg.skipWeekends = r.skipWeekends ?? DEFAULTS.skipWeekends;
           resolve();
         });
       } else {

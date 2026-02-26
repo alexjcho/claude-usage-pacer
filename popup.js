@@ -166,6 +166,7 @@ const startSelect = document.getElementById("startHour");
 const endSelect = document.getElementById("endHour");
 const toggle = document.getElementById("toggle");
 const hoursConfig = document.getElementById("hoursConfig");
+const skipWeekendsToggle = document.getElementById("skipWeekends");
 
 function fmt(h) {
   if (h === 0) return "12:00 AM";
@@ -191,11 +192,12 @@ for (const h of [20, 21, 22, 23, 0, 1, 2, 3]) {
 
 // Load
 chrome.storage.local.get(
-  ["activeStart", "activeEnd", "activeEnabled"],
+  ["activeStart", "activeEnd", "activeEnabled", "skipWeekends"],
   (r) => {
     startSelect.value = r.activeStart ?? 8;
     endSelect.value = r.activeEnd ?? 0;
     toggle.checked = r.activeEnabled ?? true;
+    skipWeekendsToggle.checked = r.skipWeekends ?? false;
     hoursConfig.classList.toggle("disabled", !toggle.checked);
   }
 );
@@ -206,6 +208,7 @@ function save() {
     activeStart: parseInt(startSelect.value),
     activeEnd: parseInt(endSelect.value),
     activeEnabled: toggle.checked,
+    skipWeekends: skipWeekendsToggle.checked,
   });
   hoursConfig.classList.toggle("disabled", !toggle.checked);
 }
@@ -213,6 +216,7 @@ function save() {
 startSelect.addEventListener("change", save);
 endSelect.addEventListener("change", save);
 toggle.addEventListener("change", save);
+skipWeekendsToggle.addEventListener("change", save);
 
 // ── Poll interval setting ─────────────────────────────────────
 const pollIntervalSelect = document.getElementById("pollInterval");

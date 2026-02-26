@@ -7,7 +7,7 @@ importScripts("pace-math.js");
 const ALARM_NAME = "usage-poll";
 const POLL_INTERVAL_DEFAULT = 5; // minutes
 
-const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0, pollInterval: POLL_INTERVAL_DEFAULT };
+const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0, skipWeekends: false, pollInterval: POLL_INTERVAL_DEFAULT };
 
 // ── Color mapping ────────────────────────────────────────────
 
@@ -130,6 +130,7 @@ function loadSettings() {
         activeEnabled: r.activeEnabled ?? DEFAULTS.activeEnabled,
         activeStart: r.activeStart ?? DEFAULTS.activeStart,
         activeEnd: r.activeEnd ?? DEFAULTS.activeEnd,
+        skipWeekends: r.skipWeekends ?? DEFAULTS.skipWeekends,
         pollInterval: r.pollInterval ?? DEFAULTS.pollInterval,
       });
     });
