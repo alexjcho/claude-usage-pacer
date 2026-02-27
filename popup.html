@@ -77,40 +77,29 @@
       color: var(--text-secondary);
     }
 
-    /* ─── Usage Link ─── */
-    .usage-btn {
+    .header-link {
+      margin-left: auto;
+      color: var(--text-muted);
+      cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      width: 100%;
-      padding: 10px 13px;
-      background: var(--amber-dim);
-      border: 1px solid var(--amber-border);
-      border-radius: 8px;
+      gap: 4px;
+      font-size: 11px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .header-link:hover {
       color: var(--amber);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      margin-bottom: 18px;
     }
 
-    .usage-btn:hover {
-      background: var(--amber-glow);
-      border-color: rgba(245, 158, 11, 0.38);
-      box-shadow: 0 0 16px rgba(245, 158, 11, 0.07);
+    .header-link svg {
+      width: 11px;
+      height: 11px;
+      color: inherit;
     }
 
-    .usage-btn .arrow {
-      transition: transform 0.15s ease, opacity 0.15s ease;
-      opacity: 0.5;
-    }
-
-    .usage-btn:hover .arrow {
-      transform: translateX(3px);
-      opacity: 1;
-    }
 
     /* ─── Section Label ─── */
     .section-label {
@@ -323,13 +312,6 @@
       text-align: center;
     }
 
-    /* ─── Hint ─── */
-    .hint {
-      font-size: 11px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      padding: 0 2px;
-    }
   </style>
 </head>
 <body>
@@ -340,6 +322,14 @@
       <path d="M7 7l2.5-2.5" stroke-width="1.5"/>
     </svg>
     <h1>Usage Pacer</h1>
+    <a id="openUsage" class="header-link" title="Open Usage Page">
+      <span>Usage Page</span>
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 8v3.5a1 1 0 0 1-1 1H2.5a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1H6"/>
+        <path d="M9 1.5h3.5V5"/>
+        <path d="M6 8L12.5 1.5"/>
+      </svg>
+    </a>
   </div>
 
   <div class="section-label">Pace</div>
@@ -347,11 +337,6 @@
   <div class="card" id="paceCard">
     <div class="pace-no-data" id="paceLoading">Loading&hellip;</div>
   </div>
-
-  <button id="openUsage" class="usage-btn">
-    Open Usage Page
-    <span class="arrow">&rarr;</span>
-  </button>
 
   <div class="section-label">Polling</div>
   <div class="card">
@@ -394,10 +379,6 @@
       </div>
     </div>
   </div>
-
-  <p class="hint">
-    Pace line only advances during these hours &mdash; overnight gaps won't inflate your numbers.
-  </p>
 
   <script src="popup.js"></script>
 </body>
