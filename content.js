@@ -220,7 +220,8 @@
     span.textContent = `${sign}${abs}% ${word}`;
 
     const usedP = row?.querySelector("p");
-    if (usedP) usedP.parentElement.insertBefore(span, usedP.nextSibling);
+    if (usedP && !usedP.parentElement.querySelector(".cup-pace-text"))
+      usedP.parentElement.insertBefore(span, usedP.nextSibling);
   }
 
   // ── Main loop ──────────────────────────────────────────────
