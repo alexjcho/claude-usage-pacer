@@ -13,18 +13,17 @@ const DEFAULTS = { activeEnabled: true, activeStart: 8, activeEnd: 0, skipWeeken
 
 /**
  * Map a pace delta to an RGB color on a 6-stop gradient.
- * 0 → green (ideal). Negative → yellow/amber (under). Positive → orange/red (over).
+ * ≤0 → green (safe). +5 → yellow. +15 → orange. +20 → red.
  * null → gray (no data).
  */
 function deltaToColor(delta) {
   if (delta == null) return [80, 80, 80];
 
   const stops = [
-    { at: -20, r: 234, g: 179, b: 8   }, // yellow-500  — far behind (underutilizing)
-    { at: -10, r: 163, g: 230, b: 53  }, // lime-400    — slightly behind, acceptable
-    { at:   0, r: 34,  g: 197, b: 94  }, // green-500   — at pace (ideal)
-    { at:   5, r: 74,  g: 222, b: 128 }, // green-400   — just ahead, still fine
-    { at:  10, r: 249, g: 115, b: 22  }, // orange-500  — burning ahead
+    { at: -20, r: 34,  g: 197, b: 94  }, // green-500   — well behind, plenty of room
+    { at:   0, r: 34,  g: 197, b: 94  }, // green-500   — at pace, on track
+    { at:   5, r: 234, g: 179, b: 8   }, // yellow-500  — slightly ahead, watch it
+    { at:  15, r: 249, g: 115, b: 22  }, // orange-500  — burning fast
     { at:  20, r: 239, g: 68,  b: 68  }, // red-500     — will run out early
   ];
 
