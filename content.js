@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  const PACE_LINE_COLOR = "rgba(255,255,255,0.55)";
+  const PACE_LINE_COLOR = "rgba(0,0,0,0.25)";
   const POLL_INTERVAL = 300;
   const MAX_POLLS = 50;
 
