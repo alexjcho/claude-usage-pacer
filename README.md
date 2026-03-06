@@ -34,7 +34,7 @@ Click the extension icon to change the mode. If a selected bucket isn't availabl
 
 ### Usage page pace lines
 
-When you visit `claude.ai/settings/usage`, the content script overlays amber pace lines on each progress bar showing where steady consumption would place you right now. A label like "+12% ahead" (red) or "−5% behind" (green) appears next to each bar.
+When you visit `claude.ai/settings/usage`, the content script overlays pace lines on each progress bar showing where steady consumption would place you right now. A label like "+12% ahead" (red) or "−5% behind" (green) appears next to each bar.
 
 ### Active hours pacing
 
