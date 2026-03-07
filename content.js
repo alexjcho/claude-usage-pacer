@@ -6,7 +6,10 @@
 (function () {
   "use strict";
 
-  const PACE_LINE_COLOR = "rgba(0,0,0,0.25)";
+  function paceLineColor() {
+    const isDark = document.documentElement.classList.contains("dark");
+    return isDark ? "rgba(255,255,255,0.5)" : "rgba(0,0,0,0.25)";
+  }
   const POLL_INTERVAL = 300;
   const MAX_POLLS = 50;
 
@@ -192,7 +195,7 @@
       top: "-2px",
       bottom: "-2px",
       width: "2px",
-      backgroundColor: PACE_LINE_COLOR,
+      backgroundColor: paceLineColor(),
       borderRadius: "1px",
       zIndex: "10",
       pointerEvents: "none",
